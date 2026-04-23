@@ -12,13 +12,13 @@ A cantina não possui um sistema estruturado de fidelização, dificultando o re
 Alunos, discentes e professores que utilizam a cantina da escola.
 
 ### Funcionalidades  
-- Cadastro de usuários  
-- Registro de compras  
-- Acúmulo automático de pontos  
-- Consulta de saldo de pontos  
-- Troca de pontos por recompensas  
-- Promoções exclusivas para usuários cadastrados  
-- Ranking opcional de clientes mais ativos  
+1. Cadastro de usuários  
+2. Registro de compras  
+3. Acúmulo automático de pontos  
+4. Consulta de saldo de pontos  
+5. Troca de pontos por recompensas  
+6. Promoções exclusivas para usuários cadastrados  
+7. Ranking opcional de clientes mais ativos  
 
 ---
 
@@ -36,12 +36,12 @@ Falta de controle organizado das vendas, dificultando a análise de produtos mai
 Responsáveis e gestores da cantina da escola.
 
 ### Funcionalidades  
-- Registro de vendas  
-- Cadastro de produtos  
-- Quantidade vendida por item  
-- Histórico de vendas por período  
-- Produtos mais vendidos  
-- Relatórios simples de desempenho  
+1. Registro de vendas  
+2. Cadastro de produtos  
+3. Quantidade vendida por item  
+4. Histórico de vendas por período  
+5. Produtos mais vendidos  
+6. Relatórios simples de desempenho  
 
 ---
 
@@ -59,9 +59,9 @@ A cantina não possui um canal estruturado para receber opiniões dos clientes, 
 Alunos, discentes e professores que utilizam a cantina da escola.
 
 ### Funcionalidades  
-- Avaliação de produtos (nota de 1 a 5)  
-- Envio de comentários  
-- Lista de produtos mais bem avaliados  
-- Visualização de feedback geral  
-- Registro de avaliações por usuário  
-- Relatório de satisfação   
+1. Avaliação de produtos (nota de 1 a 5)  
+2. Envio de comentários  
+3. Lista de produtos mais bem avaliados  
+4. Visualização de feedback geral  
+5. Registro de avaliações por usuário  
+6. Relatório de satisfação   
