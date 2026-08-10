@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  idCliente    Int      @id @default(autoincrement())
+  nome         String
+  email        String   @unique
+  senha        String
+  telefone     String?
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  cartaoFidelidade CartaoFidelidade?
+  compras          Compra[]
+}
+
+model CartaoFidelidade {
+  idCartao         Int      @id @default(autoincrement())
+  numeroCartao     String   @unique
+  pontosAcumulados Int      @default(0)
+  dataCriacao      DateTime @default(now())
+  clienteId        Int      @unique
+  atualizadoEm     DateTime @updatedAt
+
+  cliente  Cliente   @relation(fields: [clienteId], references: [idCliente])
+  resgates Resgate[]
+}
+
+model Funcionario {
+  idFuncionario Int      @id @default(autoincrement())
+  nome          String
+  email         String   @unique
+  senha         String
+  cargo         String
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
+
+  produtos  Produto[]
+  promocoes Promocao[]
+}
+
+model Produto {
+  idProduto     Int      @id @default(autoincrement())
+  nome          String
+  descricao     String
+  preco         Decimal  @db.Decimal(10, 2)
+  categoria     String
+  disponivel    Boolean  @default(true)
+  funcionarioId Int
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
+
+  funcionario Funcionario       @relation(fields: [funcionarioId], references: [idFuncionario])
+  itensCompra ItemCompra[]
+  promocoes   ProdutoPromocao[]
+}
+
+model Compra {
+  idCompra      Int      @id @default(autoincrement())
+  clienteId     Int
+  dataHora      DateTime @default(now())
+  valorTotal    Decimal  @db.Decimal(10, 2)
+  pontosGerados Int
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
+
+  cliente Cliente      @relation(fields: [clienteId], references: [idCliente])
+  itens   ItemCompra[]
+
+  @@index([clienteId])
+  @@index([dataHora])
+}
+
+model ItemCompra {
+  idItemCompra  Int      @id @default(autoincrement())
+  compraId      Int
+  produtoId     Int
+  quantidade    Int
+  precoUnitario Decimal  @db.Decimal(10, 2)
+  criadoEm      DateTime @default(now())
+
+  compra  Compra  @relation(fields: [compraId], references: [idCompra])
+  produto Produto @relation(fields: [produtoId], references: [idProduto])
+
+  @@index([compraId])
+  @@index([produtoId])
+}
+
+model Promocao {
+  idPromocao         Int      @id @default(autoincrement())
+  descricao          String
+  percentualDesconto Decimal  @db.Decimal(5, 2)
+  dataInicio         DateTime
+  dataFim            DateTime
+  funcionarioId      Int
+  criadoEm           DateTime @default(now())
+  atualizadoEm       DateTime @updatedAt
+
+  funcionario Funcionario       @relation(fields: [funcionarioId], references: [idFuncionario])
+  produtos    ProdutoPromocao[]
+
+  @@index([funcionarioId])
+  @@index([dataInicio, dataFim])
+}
+
+model ProdutoPromocao {
+  promocaoId Int
+  produtoId  Int
+
+  promocao Promocao @relation(fields: [promocaoId], references: [idPromocao])
+  produto  Produto  @relation(fields: [produtoId], references: [idProduto])
+
+  @@id([promocaoId, produtoId])
+}
+
+model Premio {
+  idPremio          Int      @id @default(autoincrement())
+  nome              String
+  pontosNecessarios Int
+  descricao         String
+  criadoEm          DateTime @default(now())
+  atualizadoEm      DateTime @updatedAt
+
+  resgates Resgate[]
+}
+
+model Resgate {
+  idResgate   Int      @id @default(autoincrement())
+  cartaoId    Int
+  premioId    Int
+  dataResgate DateTime @default(now())
+
+  cartao CartaoFidelidade @relation(fields: [cartaoId], references: [idCartao])
+  premio Premio           @relation(fields: [premioId], references: [idPremio])
+
+  @@index([cartaoId])
+  @@index([premioId])
+}

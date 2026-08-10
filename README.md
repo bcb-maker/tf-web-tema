@@ -1,87 +1,212 @@
-# tf-web-tema
 # Deuses do Sistema
 
 ## 1. Descrição do domínio
 
 ### Integrantes da equipe
-- Brian Costa Bandeira - https://github.com/bcb-maker
-- Diogo Henrique Pereira de Oliveira - https://github.com/DiogoH9
-- Lázaro Martins Rodrigues - https://github.com/Lazaro-laz
-- Pedro Augusto Ribeiro Souza - https://github.com/pars1-auri
-- Mateus Henrique Soares Ramos - https://github.com/mhsr-rgb
+
+- Brian Costa Bandeira — https://github.com/bcb-maker
+- Diogo Henrique Pereira de Oliveira — https://github.com/DiogoH9
+- Lázaro Martins Rodrigues — https://github.com/Lazaro-laz
+- Pedro Augusto Ribeiro Souza — https://github.com/pars1-auri
+- Mateus Henrique Soares Ramos — https://github.com/mhsr-rgb
 
 ### Tema do sistema
-**Cardtina** é um sistema de cardápio digital e cartão fidelidade para a cantina escolar. Além de listar os produtos disponíveis (como um cardápio online), o sistema atualiza os clientes sobre promoções e permite acumular pontos em compras, trocáveis por prêmios (salgados).
+
+**Cardtina** é um sistema de cardápio digital e cartão fidelidade para uma cantina escolar. O sistema lista os produtos disponíveis, divulga promoções e permite que clientes acumulem pontos em compras para trocá-los por prêmios.
 
 ### Usuários do sistema
-- **Clientes**: alunos e demais membros da escola que consultam o cardápio, realizam compras, acompanham seus pontos no cartão fidelidade e trocam pontos por prêmios.
-- **Funcionários/Administradores**: responsáveis por cadastrar e manter os produtos do cardápio, criar promoções e administrar o sistema.
+
+Os **clientes** são alunos e demais membros da escola que consultam o cardápio, realizam compras, acompanham os pontos do cartão fidelidade e resgatam prêmios. Os **funcionários** são responsáveis pelo cadastro dos produtos, criação de promoções e administração do sistema.
 
 ### Problema que o sistema resolve
-Havia muita reclamação sobre o preço dos produtos da cantina e falta de comunicação com os clientes. O Cardtina resolve isso oferecendo um canal centralizado de informação (cardápio sempre atualizado e divulgação de promoções) e cria um diferencial de fidelização por meio do cartão de pontos, incentivando o retorno dos clientes e dando a eles algo em troca de sua fidelidade.
 
----
+A cantina recebia reclamações sobre os preços dos produtos e enfrentava dificuldade para comunicar promoções aos clientes. O Cardtina centraliza o cardápio e as ofertas em um único sistema e cria um programa de fidelidade que incentiva o retorno dos clientes.
 
-## 2. Modelo Conceitual
+## 2. Modelo conceitual
 
 ![Modelo Conceitual](db/conceitual.png)
 
+O modelo conceitual está disponível também diretamente em [db/conceitual.png](./db/conceitual.png).
+
 ### Entidades
 
-**Cliente**
-Representa cada usuário que compra na cantina. Possui `id_cliente`, `nome`, `email`, `senha` e `telefone`. Esses atributos existem para permitir o cadastro/login do usuário e para que a comunicação de promoções e atualizações chegue até ele.
+**Cliente** representa cada pessoa que compra na cantina. Seus atributos permitem o cadastro, o login e a comunicação com o usuário. O campo `telefone` é opcional porque o cliente pode concluir o cadastro sem informar um número de telefone.
 
-**Cartão Fidelidade**
-Representa o cartão digital de pontos vinculado a cada cliente. Possui `numero_cartao`, `pontos_acumulados` e `data_criacao`. É a entidade central do diferencial do sistema: guarda o saldo de pontos que o cliente pode trocar por prêmios.
+**CartaoFidelidade** representa o cartão digital de pontos vinculado ao cliente. Ele armazena o número do cartão, o saldo de pontos e a data de criação.
 
-**Funcionário**
-Representa os administradores do sistema, responsáveis pela gestão do cardápio e das promoções. Possui `id_funcionario`, `nome`, `email`, `senha` e `cargo`, permitindo login administrativo e identificação de quem realizou cada cadastro/alteração.
+**Funcionario** representa os administradores responsáveis por cadastrar produtos e criar promoções. Seus atributos permitem identificar o funcionário responsável por essas operações.
 
-**Produto**
-Representa cada item vendido na cantina (ex: salgados, bebidas). Possui `id_produto`, `nome`, `descricao`, `preco`, `categoria` e `disponivel`. Esses atributos existem para compor o cardápio online e informar claramente ao cliente o que está sendo vendido, por quanto e se está disponível no momento.
+**Produto** representa cada item vendido na cantina, como salgados e bebidas. O produto possui descrição, preço, categoria e indicação de disponibilidade.
 
-**Compra**
-Representa uma transação realizada por um cliente na cantina. Possui `id_compra`, `data_hora`, `valor_total` e `pontos_gerados`. Registra o histórico de consumo do cliente e é a base para o cálculo de pontos do cartão fidelidade.
+**Compra** representa uma transação realizada por um cliente. Ela registra data e hora, valor total e quantidade de pontos gerados.
 
-**Item_Compra**
-Entidade associativa entre Compra e Produto, pois uma compra pode conter vários produtos e um produto pode aparecer em várias compras. Possui `quantidade` e `preco_unitario`, necessários para detalhar exatamente o que foi comprado e a que preço, já que o preço de um produto pode mudar ao longo do tempo.
+**ItemCompra** é a entidade associativa entre `Compra` e `Produto`. Ela registra quais produtos fazem parte de cada compra, suas quantidades e o preço unitário praticado no momento da compra.
 
-**Promoção**
-Representa ofertas e descontos divulgados pela cantina. Possui `id_promocao`, `descricao`, `percentual_desconto`, `data_inicio` e `data_fim`. Existe para atender à necessidade de manter os clientes informados sobre preços e ofertas, reduzindo reclamações sobre valores.
+**Promocao** representa ofertas e descontos criados pela cantina. Ela armazena a descrição, o percentual de desconto, o período de validade e o funcionário responsável.
 
-**Prêmio**
-Representa os itens que podem ser resgatados com pontos do cartão fidelidade. Possui `id_premio`, `nome`, `pontos_necessarios` e `descricao`, definindo o que o cliente pode ganhar e quantos pontos são necessários para o resgate.
+**ProdutoPromocao** é a entidade associativa que resolve o relacionamento N:M entre `Produto` e `Promocao` no modelo lógico relacional.
 
-**Resgate**
-Entidade associativa entre Cartão Fidelidade e Prêmio, pois um cartão pode resgatar vários prêmios ao longo do tempo e um mesmo prêmio pode ser resgatado por vários cartões diferentes. Possui `data_resgate`, para registrar o histórico de trocas.
+**Premio** representa os itens que podem ser resgatados com pontos do cartão fidelidade. Ele registra o nome, a descrição e a quantidade de pontos necessária para o resgate.
 
-### Relacionamentos
+**Resgate** registra cada troca de pontos realizada por um cartão fidelidade, relacionando o cartão ao prêmio e guardando a data do resgate.
 
-- Um **Cliente** possui exatamente um **Cartão Fidelidade**, e cada Cartão Fidelidade pertence a um único Cliente (1:1).
-- Um **Cliente** pode realizar várias **Compras**, mas cada Compra pertence a um único Cliente (1:N).
-- Uma **Compra** pode conter vários **Produtos**, e um **Produto** pode estar presente em várias Compras, relacionamento N:M resolvido pela entidade **Item_Compra**. Os pontos gerados em cada compra são calculados proporcionalmente ao valor total gasto.
-- Um **Cartão Fidelidade** pode resgatar vários **Prêmios**, e um **Prêmio** pode ser resgatado por vários Cartões diferentes, relacionamento N:M resolvido pela entidade **Resgate**.
-- Um **Funcionário** gerencia vários **Produtos**, mas cada Produto é gerenciado por um único Funcionário responsável pelo cadastro (1:N).
-- Um **Funcionário** cria várias **Promoções**, mas cada Promoção é criada por um único Funcionário (1:N).
-- Uma **Promoção** pode se aplicar a vários **Produtos**, e um **Produto** pode estar em várias Promoções ao mesmo tempo (N:M).
+### Relacionamentos e cardinalidades
 
----
+Um **Cliente possui um CartaoFidelidade**, e cada cartão pertence a um único cliente, formando uma relação 1:1. No modelo lógico, `CartaoFidelidade.clienteId` é obrigatório e único. O lado do cliente aparece como opcional no Prisma porque o banco não consegue obrigar a criação do cartão no mesmo instante do cadastro do cliente; a regra de negócio exige que o cartão seja criado para todo cliente ativo.
 
-## 3. Sobre o Figma (protótipo de interface)
+Um **Cliente pode realizar várias Compras**, mas cada compra pertence a um único cliente, formando uma relação 1:N. Uma **Compra possui vários ItemCompra**, e cada item pertence a uma compra. Um **Produto pode aparecer em vários ItemCompra**, permitindo que o mesmo produto participe de muitas compras.
 
-Título:
-Cardtina
+Um **Funcionario gerencia vários Produtos**, mas cada produto possui um funcionário responsável pelo cadastro. Um **Funcionario cria várias Promocoes**, mas cada promoção possui um funcionário responsável pela criação. Uma **Promocao pode se aplicar a vários Produtos**, e um produto pode participar de várias promoções; por isso, o modelo lógico usa `ProdutoPromocao` como tabela associativa.
 
-Descrição:
-O Cardtina é um projeto de interface desenvolvido no Figma com foco na criação de wireframes para um sistema de cartão digital de uma cantina escolar. O projeto apresenta a estrutura visual e a organização das telas principais do aplicativo, oferecendo uma experiência simples e intuitiva para os usuários da cantina escolar.
+Um **CartaoFidelidade pode realizar vários Resgates**, e cada resgate pertence a um cartão. Um **Premio pode aparecer em vários Resgates**, permitindo que diferentes cartões resgatem o mesmo prêmio ao longo do tempo.
 
-Principais funcionalidades:
-- Wireframe da página de login
-- Wireframe da página de cadastro
-- Tela de visualização de pontos acumulados
-- Sistema de troca de pontos por prêmios (salgados)
-- Exibição do número do cartão digital
-- Histórico das últimas compras
-- Organização da navegação entre telas
+## 3. Modelo lógico — Prisma
 
-https://www.figma.com/design/r5sLU0QOgZ4hToJPFeEhzX/TRABALHO?m=auto&t=QsZna7bScbwtO6Xf-6
+O modelo lógico está implementado no arquivo [prisma/schema.prisma](./prisma/schema.prisma). Cada `model` representa uma tabela, cada atributo representa uma coluna e cada campo `@relation` define uma chave estrangeira.
+
+O schema usa os tipos `String`, `Int`, `Boolean`, `DateTime` e `Decimal`. Todas as entidades possuem uma chave primária com `@default(autoincrement())`. Os campos `criadoEm` usam `@default(now())` e os campos `atualizadoEm` usam `@updatedAt` quando há sentido em registrar a atualização da entidade.
+
+O único campo opcional é `Cliente.telefone`. Ele foi definido como `String?` porque o telefone pode não ser informado no cadastro; nome, e-mail, senha e os demais dados necessários ao domínio são obrigatórios.
+
+### Diagrama lógico em Mermaid
+
+```mermaid
+erDiagram
+    CLIENTE ||--o| CARTAO_FIDELIDADE : possui
+    CLIENTE ||--o{ COMPRA : realiza
+    COMPRA ||--|{ ITEM_COMPRA : contem
+    PRODUTO ||--o{ ITEM_COMPRA : aparece_em
+    FUNCIONARIO ||--o{ PRODUTO : gerencia
+    FUNCIONARIO ||--o{ PROMOCAO : cria
+    PROMOCAO ||--o{ PRODUTO_PROMOCAO : aplica_se
+    PRODUTO ||--o{ PRODUTO_PROMOCAO : participa
+    CARTAO_FIDELIDADE ||--o{ RESGATE : realiza
+    PREMIO ||--o{ RESGATE : e_resgatado
+
+    CLIENTE {
+        int idCliente PK
+        string nome
+        string email UK
+        string senha
+        string telefone NULL
+    }
+    CARTAO_FIDELIDADE {
+        int idCartao PK
+        string numeroCartao UK
+        int pontosAcumulados
+        datetime dataCriacao
+        int clienteId FK
+    }
+    FUNCIONARIO {
+        int idFuncionario PK
+        string nome
+        string email UK
+        string senha
+        string cargo
+    }
+    PRODUTO {
+        int idProduto PK
+        string nome
+        string descricao
+        decimal preco
+        string categoria
+        boolean disponivel
+        int funcionarioId FK
+    }
+    COMPRA {
+        int idCompra PK
+        int clienteId FK
+        datetime dataHora
+        decimal valorTotal
+        int pontosGerados
+    }
+    ITEM_COMPRA {
+        int idItemCompra PK
+        int compraId FK
+        int produtoId FK
+        int quantidade
+        decimal precoUnitario
+    }
+    PROMOCAO {
+        int idPromocao PK
+        string descricao
+        decimal percentualDesconto
+        datetime dataInicio
+        datetime dataFim
+        int funcionarioId FK
+    }
+    PRODUTO_PROMOCAO {
+        int promocaoId PK, FK
+        int produtoId PK, FK
+    }
+    PREMIO {
+        int idPremio PK
+        string nome
+        int pontosNecessarios
+        string descricao
+    }
+    RESGATE {
+        int idResgate PK
+        int cartaoId FK
+        int premioId FK
+        datetime dataResgate
+    }
+```
+
+## 4. Modelo físico — migrations e seed
+
+O modelo físico é representado pela migration inicial em [prisma/migrations](./prisma/migrations). Ela cria as tabelas, chaves primárias, chaves estrangeiras, índices e restrições do modelo lógico.
+
+O seed está em [prisma/seed.js](./prisma/seed.js). Ele cria dados fictícios para todas as tabelas na ordem correta: funcionário e clientes, cartões, produtos, prêmios, promoções, associações de promoções, compras, itens de compra e resgates.
+
+Para instalar as dependências e validar o projeto, execute:
+
+```bash
+npm install
+npx prisma format
+npx prisma validate
+```
+
+Para aplicar as migrations no banco Neon configurado em `DATABASE_URL`, execute:
+
+```bash
+npx prisma migrate deploy
+npx prisma db seed
+```
+
+Para abrir uma interface visual com as tabelas e os registros, execute:
+
+```bash
+npx prisma studio
+```
+
+Depois de executar a migration e o seed no Neon, deve ser incluído neste README um print do Prisma Studio ou do painel do Neon mostrando as tabelas e os dados populados.
+
+## 5. Configuração do ambiente
+
+Copie `.env.example` para `.env` e substitua a URL genérica pela URL real do banco Neon. O arquivo `.env` não deve ser versionado. O arquivo [`.env.example`](./.env.example) contém somente o formato genérico exigido:
+
+```text
+DATABASE_URL="postgresql://usuario:senha@host/banco?sslmode=require"
+```
+
+A proteção do ambiente está definida em [`.gitignore`](./.gitignore). Para verificar se o `.env` está protegido, execute:
+
+```bash
+git status .env
+```
+
+A saída esperada é que o caminho não apareça como arquivo novo ou modificado.
+
+## 6. Protótipo de interface
+
+O protótipo das telas está disponível no [Figma](https://www.figma.com/design/r5sLU0QOgZ4hToJPFeEhzX/TRABALHO?m=auto&t=QsZna7bScbwtO6Xf-6).
+
+Principais telas previstas:
+
+- Login e cadastro.
+- Visualização do saldo de pontos.
+- Exibição do número do cartão digital.
+- Histórico das últimas compras.
+- Troca de pontos por prêmios.
+- Divulgação de promoções.
