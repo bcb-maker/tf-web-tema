@@ -88,7 +88,7 @@ erDiagram
         string nome
         string email UK
         string senha
-        string telefone NULL
+        string telefone "opcional"
     }
     CARTAO_FIDELIDADE {
         int idCartao PK
