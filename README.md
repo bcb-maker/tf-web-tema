@@ -68,7 +68,20 @@ O schema usa os tipos `String`, `Int`, `Boolean`, `DateTime` e `Decimal`. Todas 
 
 O único campo opcional é `Cliente.telefone`. Ele foi definido como `String?` porque o telefone pode não ser informado no cadastro; nome, e-mail, senha e os demais dados necessários ao domínio são obrigatórios.
 
+### Diagrama lógico em Mermaid
 
+```mermaid
+erDiagram
+    CLIENTE ||--o| CARTAO_FIDELIDADE : possui
+    CLIENTE ||--o{ COMPRA : realiza
+    COMPRA ||--|{ ITEM_COMPRA : contem
+    PRODUTO ||--o{ ITEM_COMPRA : aparece_em
+    FUNCIONARIO ||--o{ PRODUTO : gerencia
+    FUNCIONARIO ||--o{ PROMOCAO : cria
+    PROMOCAO ||--o{ PRODUTO_PROMOCAO : aplica_se
+    PRODUTO ||--o{ PRODUTO_PROMOCAO : participa
+    CARTAO_FIDELIDADE ||--o{ RESGATE : realiza
+    PREMIO ||--o{ RESGATE : e_resgatado
 
     CLIENTE {
         int idCliente PK
